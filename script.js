@@ -1,89 +1,216 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const contactForm = document.getElementById("contactForm");
-    const contactList = document.getElementById("contactList");
-    const clearAllButton = document.getElementById("clearAll");
+//hacer un if para ver si existe el localstorage
+//CRUD
+console.log("hola");
+let contacts = [];
 
 
-    loadContacts();
+localStorage.setItem("Contactos",JSON.stringify([]));//inicializar variables 
+//recoger los datos del formulario
+document.querySelector("form").addEventListener("submit", function (event) {
+    event.preventDefault();
 
+    const name = event.target.nombre.value;
+    const email = event.target.email.value;
+    const mensaje = event.target.mensaje.value;
+    const url = event.target.url.value;
+    //Se guarda en contact
     
-    // envío del formulario
-    contactForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-        const message = document.getElementById("message").value;
-        const imageUrl = document.getElementById("imageUrl").value;
-
-        const contact = { name, email, message, imageUrl };
-        saveContact(contact);
-        contactForm.reset(); // reiniciar el formulario
-        loadContacts(); // actualizar la lista
-    });
-
-    // // borrar todos los contactos
-    clearAllButton.addEventListener("click", function() {
-        localStorage.removeItem("contacts");
-        loadContacts(); // actualizar la lista
-    });
-
-    // //  guardar contacto en Local Storage
-    function saveContact(contact) {
-        const contacts = getContacts();
-        contacts.push(contact);
-        localStorage.setItem("contacts", JSON.stringify(contacts));
+    let contact =
+    {
+    nombre: name,
+    email: email,
+    mensaje: mensaje,
+    url: url
     }
+    pintarUser(contact);
+    guardarUser(contact);
+});
+//function para pintar en tarjetitas
+function pintarUser(contact){
+    let ul = document.querySelector("ul");
+    let li = document.createElement("li");
+    //creamos la imagen
+    let img = document.createElement("img");
+    img.src="./Ejemplo.png";
+    
 
-    //// acceder a contactos en Local Storage
-    function getContacts() {
-        const contacts = localStorage.getItem("contacts");
-        return contacts ? JSON.parse(contacts) : [];
+    let nombre1 = document.createElement("p");
+    nombre1.textContent = `Nombre: ${contact.nombre}`;
+
+    let email1 = document.createElement("p");
+    email1.textContent = `Email: ${contact.email}`;
+
+    let mensaje1 = document.createElement("p");
+    mensaje1.textContent = `Mensaje: ${contact.mensaje}`;
+
+    let imagen1 = document.createElement("p");
+    imagen1.textContent = `Imagen de ${contact.nombre}`
+
+    // Unimos todos los p al li
+    li.appendChild(nombre1);
+    li.appendChild(email1);
+    li.appendChild(mensaje1);
+    li.appendChild(imagen1);
+    li.appendChild(img);
+    // Unimos el li al ul
+    ul.appendChild(li);
+}
+
+function guardarUser(contact) {
+    contacts.push(contact);
+    // Transformar el array a String y subirlo a Web Storage
+    updateUser(contacts);
+}
+
+function updateUser(contacts){
+    localStorage.setItem("Contactos", JSON.stringify(contacts));
+    
+}
+
+document.getElementById("borrarTodo").addEventListener("click", function () {
+    let confirmacion = confirm("Estás seguro?")
+    
+    if(confirmacion){
+        
+        localStorage.clear();
+       alert("Todos los usuarios han sido borrados");
     }
+    
 
-    ////  cargar y mostrar los contactos
-    function loadContacts() {
-        const contacts = getContacts();
-        contactList.innerHTML = ""; // limpiar la lista antes de cargar
-
-        contacts.forEach((contact, index) => {
-            const li = document.createElement("li");
-            li.className = "contact-item";
-            li.innerHTML = `
-                <div>
-                    ${contact.name} 
-                    ${contact.email}
-                    ${contact.message}
-                    ${contact.imageUrl ? `<img src="${contact.imageUrl}"  "/>` : ''}
-                </div>
-                <button class="delete-button" data-index="${index}">Borrar </button>
-            `;
-            contactList.appendChild(li);
-        });
-
-        // ///eventos para los botones de borrar
-        document.querySelectorAll(".delete-button").forEach(button => {
-            button.addEventListener("click", function() {
-                const index = this.getAttribute("data-index");
-                deleteContact(index);
-            });
-         });
+});
+document.getElementById("borrarContacto").addEventListener("click", function () {
+   let contactos = [localStorage.getItem(JSON.parse(JSON.stringify(contacts)))];
+ let emailBorrar = prompt("introduce aquí el email del contacto que se borrará");
+    for(let i=0; i < contactos.length; i++) {
+        if(contactos[i] == emailBorrar){
+        //contactos.splice(i,1);
+        delete(contactos[i]);
+        
     }
-
-    //// borrar un contacto específico
-    function deleteContact(index) {
-        const contacts = getContacts();
-        contacts.splice(index, 1);
-        localStorage.setItem("contacts", JSON.stringify(contacts));
-        loadContacts(); // actualizar la lista
+    updateUser(contactos);
+ }
+    
+ alert(`El contacto con email: ${emailBorrar} ha sido eliminado`);
+});
+document.getElementById("borrarDOM").addEventListener("click", function () {
+    let confirmacion = confirm("Estás seguro?");
+    
+    if(confirmacion){
+        
+        const div1 = document.querySelector("ul");
+        div1.remove();
+        alert("DOM borrado");
     }
 });
+document.getElementById("Editar").addEventListener("click"), function () {
+    let contactoEditar = prompt("introduce aquí el nombre del contacto que deseas editar");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     const contactForm = document.getElementById("contactForm");
+//     const contactList = document.getElementById("contactList");
+//     const clearAllButton = document.getElementById("clearAll");
+
+
+//     loadContacts();
+
+    
+//     // envío del formulario
+//     contactForm.addEventListener("submit", function(event) {
+//         event.preventDefault();
+
+//         const name = document.getElementById("name").value;
+//         const email = document.getElementById("email").value;
+//         const message = document.getElementById("message").value;
+//         const imageUrl = document.getElementById("imageUrl").value;
+
+//         const contact = { name, email, message, imageUrl };
+//         saveContact(contact);
+//         contactForm.reset(); // reiniciar el formulario
+//         loadContacts(); // actualizar la lista
+//     });
+
+//     // // borrar todos los contactos
+//     clearAllButton.addEventListener("click", function() {
+//         localStorage.removeItem("contacts");
+//         loadContacts(); // actualizar la lista
+//     });
+
+//     // //  guardar contacto en Local Storage
+//     function saveContact(contact) {
+//         const contacts = getContacts();
+//         contacts.push(contact);
+//         localStorage.setItem("contacts", JSON.stringify(contacts));
+//     }
+
+//     //// acceder a contactos en Local Storage
+//     function getContacts() {
+//         const contacts = localStorage.getItem("contacts");
+//         return contacts ? JSON.parse(contacts) : [];
+//     }
+
+//     ////  cargar y mostrar los contactos
+//     function loadContacts() {
+//         const contacts = getContacts();
+//         contactList.innerHTML = ""; // limpiar la lista antes de cargar
+
+//         contacts.forEach((contact, index) => {
+//             const li = document.createElement("li");
+//             li.className = "contact-item";
+//             li.innerHTML = `
+//                 <div>
+//                     ${contact.name} 
+//                     ${contact.email}
+//                     ${contact.message}
+//                     ${contact.imageUrl ? `<img src="${contact.imageUrl}"  "/>` : ''}
+//                 </div>
+//                 <button class="delete-button" data-index="${index}">Borrar </button>
+//             `;
+//             contactList.appendChild(li);
+//         });
+
+//         // ///eventos para los botones de borrar
+//         document.querySelectorAll(".delete-button").forEach(button => {
+//             button.addEventListener("click", function() {
+//                 const index = this.getAttribute("data-index");
+//                 deleteContact(index);
+//             });
+//          });
+//     }
+
+//     //// borrar un contacto específico
+//     function deleteContact(index) {
+//         const contacts = getContacts();
+//         contacts.splice(index, 1);
+//         localStorage.setItem("contacts", JSON.stringify(contacts));
+//         loadContacts(); // actualizar la lista
+//     }
+// });
 
 
 //-------------------------------con fallos-------------------------
 
 // console.log("hola");
 // let usuarios = [...{}];
+
+// if (localStorage)
+// localStorage.setiItems, ("usuarios"),JSON.stringify;{[]};
+
 // //recoger los datos del formulario
 
 // JSON.stringify()
@@ -110,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //     })
 //   );
 // localStorage.getItem("usuario");
+
 // //stringify, push y luego set item 
 // const contactosJson = JSON.stringify
 
@@ -131,7 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //         alert("Por favor, ingresa un ID de contacto.");
 //         return;
 //     }
-// //Función para borrar un contacto específico
+
+//     //Función para borrar un contacto específico
 // function deleteContacto(index) {
 //     const contacto = getContacts();
 //     contacto.splice(index, 1);
